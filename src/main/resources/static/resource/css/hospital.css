@@ -1,0 +1,16 @@
+.message{
+    position: absolute;
+    top: 100px;
+    left: 100px;
+}
+.message2{
+    position: absolute;
+    top: 200px;
+    left: 100px;
+}
+
+/* 지도의 크기를 설정합니다 */
+#map {
+    height: 500px;
+    width: 100%;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>24 hour hospital</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/resource/css/hospital.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.1.4/tailwind.min.css">
+
+    <!--  헤더 파일 추가  -->
+<!--    <th:block th:include="usr/common/head :: header"></th:block>-->
+<!--    <th:block th:replace="usr/common/head"/>-->
+
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="/resource/js/hospital.js"></script>
+
+<h1>지역별 동물병원 검색</h1>
+
+<hr>
+
+<!-- 시 선택 셀렉트 박스 -->
+<label for="city-select">시/도를 선택하세요 : </label>
+<select id="city-select" onchange="loadCounties()">
+    <option value="">시/도 선택</option>
+</select>
+
+<!-- 군/구 선택 셀렉트 박스 -->
+<label for="county-select">시/군/구를 선택하세요 : </label>
+<select id="county-select">
+    <option value="">시/군/구 선택</option>
+</select>
+
+<button onclick="geocodeAddress()">검색</button>
+
+<hr>
+
+<!-- 지도 표시할 div -->
+<div id="map" style="height: 500px; width: 100%;"></div>
+
+<!-- Google Maps API 호출 -->
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=googleMap_apikey"></script>
+<!-- &libraries=places -->
+
+<!-- JavaScript 파일 불러오기 -->
+<script src="/resource/js/hospital.js"></script> <!-- JS 파일 경로 -->
+
+
+</body>
+</html>

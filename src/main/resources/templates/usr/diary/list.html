@@ -1,0 +1,75 @@
+<div class = "header">
+<th:block th:replace="usr/common/head"/>
+</div>
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" type="text/css" th:href="@{/main.css}">
+<!--테일윈드 적용-->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<!--켈린더.js 사용경로적용-->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<!--리스트 css 경로적용-->
+<link rel="stylesheet" href="/resource/css/diary/DiaryList.css">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PetdiaryList</title>
+</head>
+<body>
+
+<!-- 페이지 명 -->
+<div class="pageName mx-auto mt-8">
+    <h1 class="text-center text-4xl font-bold mb-6">반려견 성장 기록</h1>
+</div>
+
+
+
+
+<!-- 메인컨테이너-->
+<section class="container  pt-20 mx-auto flex justify-center items-start space-x-20 " >
+
+
+
+    <!-- 켈린더 -->
+    <div id="calendar"></div>
+        <script src="/resource/js/calender.js"></script>
+
+
+    <!-- 기록 리스트 페이지-->
+    <div class="diaryList">
+        <table class="min-w-full table-auto">
+            <thead>
+
+            <!-- 필터 -->
+            <div >
+                <label for="dateFilter" class="text-lg font-semibold"></label>
+                <select id="dateFilter" class="px-4 py-2 border rounded font-bold text-gray-700">
+                    <option value="latest">최신 순</option>
+                    <option value="oldest">오래된 순</option>
+                </select>
+            </div>
+
+
+            <tr class="listType">
+                <th class="py-4 ">날짜</th>
+                <th>제목</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="diary : ${diaries}">
+                <td class="px-20 py-2 text-gray-700  font-bold" th:text="${diary.regDate}">작성일</td>
+                <td class="px-20 py-2 hover:underline  font-bold">
+                    <a th:href="@{|/usr/diary/detail(id=${diary.id})|}" th:text="${diary.title}">제목</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button id="writeButton" onclick="window.location.href='/usr/diary/write'" class="px-4 py-2 bg-gray-500 text-white font-semibold rounded hover:bg-gray-600">
+            새 글 작성
+        </button>
+    </div>
+</section>
+
+</body>
+</html>
