@@ -189,10 +189,13 @@ CREATE TABLE alarm (
                        regDate DATETIME NOT NULL COMMENT '생성 날짜',
                        updateDate DATETIME NOT NULL COMMENT '수정 날짜',
                        memberId INT(10) UNSIGNED NOT NULL COMMENT '생성자 식별번호',
-                       alarmDate DATE COMMENT '알람이 울릴 날짜',
-                       alarmDay ENUM('월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일') COMMENT '알람이 울릴 요일',
-                       alarmTime TIME NOT NULL COMMENT '알람이 울릴 시간',
-                       CHECK ((alarmDate IS NOT NULL) OR (alarmDay IS NOT NULL))  -- 최소 하나는 NOT NULL
+                       alarm_date DATE COMMENT '알람이 울릴 날짜',
+                       alarm_day ENUM('월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일') COMMENT '알람이 울릴 요일',
+                       message TEXT NOT NULL COMMENT '알람 메시지',
+                       site TEXT NOT NULL COMMENT '어느 사이트에서 왔는지 여부',
+                       is_sent BOOLEAN DEFAULT FALSE COMMENT '알람이 이미 전송되었는지 여부',
+                       FOREIGN KEY (memberId) REFERENCES MEMBER(id),
+                       CHECK ((alarm_date IS NOT NULL) OR (alarm_day IS NOT NULL))
 );
 
 ## 생필품 테이블
@@ -204,8 +207,7 @@ CREATE TABLE essentials (
                             itemType CHAR(20) NOT NULL COMMENT '생필품 종류',
                             purchaseDate DATE NOT NULL COMMENT '구매 날짜',
                             usageCycle INT(10) NOT NULL COMMENT '사용주기',
-                            timing INT(10) NOT NULL COMMENT '알림 시기',
-                            purchaseStatus TINYINT(1) UNSIGNED NOT NULL COMMENT '구매여부'
+                            timing INT(10) NOT NULL COMMENT '알림 시기'
 );
 
 ## 약 체크 테이블
@@ -379,4 +381,45 @@ CREATE TABLE doghealth(
                           vaccinationDate DATETIME NOT NULL COMMENT '예방 접종 날짜',
                           checkupDate DATETIME NOT NULL COMMENT '건강 검진 날짜',
                           activityLevel FLOAT NOT NULL COMMENT '활동량(평균걸음수)'
+);
+
+## 일지작성  테이블
+CREATE TABLE Diary(
+                      Id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '일지 고유번호',
+                      regDate DATETIME NOT NULL COMMENT '생성일',
+                      updateDate DATETIME NOT NULL COMMENT'수정일',
+                      memberId INT(10) NOT NULL COMMENT'회원번호',
+                      title CHAR(200) NOT NULL COMMENT'제목',
+                      `body` TEXT NOT NULL COMMENT'내용',
+                      imagePath CHAR(200) NOT NULL COMMENT '이미지 저장경로',
+                      startDate DATE NOT NULL COMMENT '약복용 시작일',
+                      endDate DATE NOT NULL COMMENT '약복용 종료일',
+                      takingTime TIME NOT NULL COMMENT '복용 시간',
+                      information TEXT NOT NULL COMMENT '복용약 특이사항'
+);
+
+## 일지작성 테스트데이터
+INSERT INTO Diary (regDate, updateDate, memberId, title, BODY, imagePath, startDate, endDate, takingTime, information) VALUES
+                                                                                                                           ('2023-01-01 10:00:00', '2023-01-01 10:00:00', 1, 'First Diary Entry', 'Today I started my medication.', '/images/entry1.jpg', '2023-01-01', '2023-01-10', '08:00:00', 'Take with food.'),
+                                                                                                                           ('2023-01-02 11:00:00', '2023-01-02 11:00:00', 1, 'Second Diary Entry', 'Feeling good so far.', '/images/entry2.jpg', '2023-01-01', '2023-01-10', '08:00:00', 'No side effects noted.'),
+                                                                                                                           ('2023-01-03 12:00:00', '2023-01-03 12:00:00', 2, 'New Member Diary', 'Just started taking medication.', '/images/entry3.jpg', '2023-01-03', '2023-01-20', '09:00:00', 'Monitor for headaches.'),
+                                                                                                                           ('2023-01-04 13:00:00', '2023-01-04 13:00:00', 3, 'Medication Update', 'Had to change my dosage.', '/images/entry4.jpg', '2023-01-05', '2023-01-15', '07:30:00', 'Increase dosage as advised.'),
+                                                                                                                           ('2023-01-05 14:00:00', '2023-01-05 14:00:00', 1, 'Dietary Changes', 'Made some dietary changes to support my health.', '/images/entry5.jpg', '2023-01-01', '2023-01-10', '08:00:00', 'Avoid dairy while on medication.'),
+                                                                                                                           ('2023-01-06 15:00:00', '2023-01-06 15:00:00', 2, 'Feeling Tired', 'Noticed I am feeling more tired lately.', '/images/entry6.jpg', '2023-01-03', '2023-01-20', '09:00:00', 'Consult doctor if fatigue persists.'),
+                                                                                                                           ('2023-01-07 16:00:00', '2023-01-07 16:00:00', 3, 'Midway Check', 'Halfway through my medication course.', '/images/entry7.jpg', '2023-01-05', '2023-01-15', '07:30:00', 'Feeling hopeful about results.'),
+                                                                                                                           ('2023-01-08 17:00:00', '2023-01-08 17:00:00', 1, 'Final Days', 'Last few days of medication.', '/images/entry8.jpg', '2023-01-01', '2023-01-10', '08:00:00', 'Reflecting on my journey.'),
+                                                                                                                           ('2023-01-09 18:00:00', '2023-01-09 18:00:00', 2, 'Follow-up Appointment', 'Had a follow-up appointment today.', '/images/entry9.jpg', '2023-01-03', '2023-01-20', '09:00:00', 'Doctor is pleased with progress.'),
+                                                                                                                           ('2023-01-10 19:00:00', '2023-01-10 19:00:00', 3, 'Completion', 'Finished my medication course.', '/images/entry10.jpg', '2023-01-05', '2023-01-15', '07:30:00', 'Celebrate the achievement!');
+
+## 병원 테이블
+CREATE TABLE hospital(
+                         id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '고유 병원 ID',
+                         `name` VARCHAR(30) NOT NULL COMMENT '병원 이름',
+                         callNumber VARCHAR(20) DEFAULT NULL COMMENT '소재지전화번호',
+                         jibunAddress TEXT NOT NULL COMMENT '병원의 지번 주소',
+                         roadAddress TEXT NOT NULL COMMENT '병원의 도로명 주소',
+                         latitude VARCHAR(20) DEFAULT NULL COMMENT '좌표정보(x)',
+                         longitude VARCHAR(20) DEFAULT NULL COMMENT '좌표정보(y)',
+                         businessStatus ENUM('영업', '폐업') DEFAULT '영업' COMMENT '영업 상태',
+                         `type` ENUM('일반', '야간', '24시간') NOT NULL DEFAULT '일반' COMMENT '병원 타입'
 );

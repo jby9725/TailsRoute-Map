@@ -24,16 +24,15 @@ public class EssentialService {
                 essential.getItemType(),
                 essential.getPurchaseDate(),
                 essential.getUsageCycle(),
-                essential.getTiming(),
-                essential.getPurchaseStatus()
+                essential.getTiming()
         );
     }
     public List<Essentials> findEssentialsByMemberId(int memberId) {
         // memberId에 해당하는 Essentials를 데이터베이스에서 조회하여 반환
         return essentialsRepository.findByMemberId(memberId);
     }
-    public void updateEssentials(String itemType, int usageCycle, int timing,int purchaseStatus,int id) {
-        essentialsRepository.updateEssentials(itemType, usageCycle, timing, purchaseStatus,id);
+    public void updateEssentials(String itemType, int usageCycle, int timing,String purchaseDate,int id) {
+        essentialsRepository.updateEssentials(itemType, usageCycle, timing,purchaseDate,id);
     }
     public void deleteEssentials(int id) {
         essentialsRepository.deleteEssentials(id);

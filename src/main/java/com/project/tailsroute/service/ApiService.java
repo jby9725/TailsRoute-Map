@@ -14,22 +14,19 @@ public class ApiService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${naver.client.id}")
-    private String clientId;
-
-    @Value("${naver.client.secret}")
-    private String clientSecret;
-
     public ApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     public String searchProducts(String query) {
         String apiUrl = "https://openapi.naver.com/v1/search/shop.json?query=" + query + "&display=100";
-        System.out.println("API URL: " + apiUrl);
 
         // 헤더에 Client ID와 Client Secret 설정
         HttpHeaders headers = new HttpHeaders();
+
+        String clientId = System.getenv("NAVER_CLIENT_ID");
+        String clientSecret = System.getenv("NAVER_CLIENT_SECRET");
+
         headers.set("X-Naver-Client-Id", clientId);
         headers.set("X-Naver-Client-Secret", clientSecret);
 
@@ -38,7 +35,6 @@ public class ApiService {
         try {
             // 네이버 API 호출
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
-            System.out.println("Response: " + response.getBody());
 
             return response.getBody();
         } catch (HttpClientErrorException e) {

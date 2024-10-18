@@ -67,13 +67,14 @@ public interface DiaryRepository {
 					 LocalTime takingTime, String information);
 
 	@Select("""
-            SELECT D.*, M.nickname AS extra__writer
-            FROM diary AS D
-            INNER JOIN `member` AS M
-            ON D.memberId = M.id
-            ORDER BY D.id DESC
-            """)
-	List<Diary> getDiary();
+                        SELECT D.*, M.nickname AS extra__writer
+                        FROM diary AS D
+                        INNER JOIN `member` AS M
+                        ON D.memberId = M.id
+                        ORDER BY D.id DESC
+            LIMIT #{limit} OFFSET #{offset}
+                        """)
+	List<Diary> findAllByOrderByDateDesc(@Param("limit") int limit, @Param("offset") int offset);
 
 	@Select("""
         SELECT D.*, M.nickname AS extra__writer
@@ -81,8 +82,17 @@ public interface DiaryRepository {
             INNER JOIN `member` AS M
             ON D.memberId = M.id
             ORDER BY D.id asc 		
+         LIMIT #{limit} OFFSET #{offset}
 """)
-	List<Diary> getrecentDiary();
+	List<Diary> findAllByOrderByDateAsc(@Param("limit") int limit, @Param("offset") int offset);
 
-	long count();
+
+
+
+	@Select("""
+    SELECT COUNT(*)
+    FROM diary
+""")
+	int countDiaries();
+
 }

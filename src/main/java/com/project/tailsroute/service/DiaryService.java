@@ -27,9 +27,20 @@ public class DiaryService {
         diaryRepository.writeDiary(memberId, title, body, imagePath, startDate, endDate, takingTime, information);
     }
 
-    public List<Diary> getDiaryList() {
+    public List<Diary> getDiaryList(String sort, int page, int size) {
+        int offset = (page - 1) * size;
+        int limit = size;
 
-        return diaryRepository.getDiary();
+        if ("oldest".equals(sort)) {
+            return diaryRepository.findAllByOrderByDateDesc(limit, offset); // 오래된순
+        } else {
+            return diaryRepository.findAllByOrderByDateAsc(limit, offset); // 최신순
+        }
+    }
+
+    public int countDiaries() {
+        return diaryRepository.countDiaries();
+
     }
 
 

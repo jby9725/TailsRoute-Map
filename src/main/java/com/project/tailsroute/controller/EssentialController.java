@@ -40,7 +40,7 @@ public class EssentialController {
                 essentials.getItemType(),
                 essentials.getUsageCycle(),
                 essentials.getTiming(),
-                essentials.getPurchaseStatus(),
+                essentials.getPurchaseDate(),
                 essentials.getId()
         );
         return ResponseEntity.ok("{\"message\":\"수정 성공\"}");
