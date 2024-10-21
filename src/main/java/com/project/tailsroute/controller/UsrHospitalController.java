@@ -3,6 +3,7 @@ package com.project.tailsroute.controller;
 
 import com.opencsv.CSVReader;
 import com.project.tailsroute.service.HospitalService;
+import com.project.tailsroute.vo.Hospital;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 @Controller
 public class UsrHospitalController {
@@ -131,4 +133,12 @@ public class UsrHospitalController {
 
         return "CSV to DB Insert 성공! <hr>" + output.toString();
     }
+
+    @RequestMapping("/usr/hospital/hospitals")
+    public String showHospitals(Model model) {
+        List<Hospital> hospitals = hospitalService.getAllHospitals();
+        model.addAttribute("hospitals", hospitals);
+        return "usr/hospital/hospitals"; // hospitalList.html 또는 hospitalList.jsp
+    }
+
 }

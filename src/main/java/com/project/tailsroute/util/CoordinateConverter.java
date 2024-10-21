@@ -35,27 +35,4 @@ public class CoordinateConverter {
         return HelmertTransformation.transform(destCoord.y, destCoord.x);
 	}
 
-//	public static double[] reverseConvertProj4j(double latitude, double longitude) {
-//		// CRSFactory 생성
-//		CRSFactory crsFactory = new CRSFactory();
-//
-//		// 원본 및 목적지 좌표계 설정 (WGS84 -> 중부원점)
-//		CoordinateReferenceSystem srcCrs = crsFactory.createFromName("EPSG:4326");
-//		CoordinateReferenceSystem destCrs = crsFactory.createFromName("EPSG:2097");
-//
-//		// 좌표 변환을 위한 변환기 생성
-//		CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
-//		CoordinateTransform transform = ctFactory.createTransform(srcCrs, destCrs);
-//
-//		// 변환할 좌표 설정
-//		ProjCoordinate srcCoord = new ProjCoordinate(longitude, latitude);
-//		ProjCoordinate destCoord = new ProjCoordinate();
-//
-//		// 좌표 변환 수행
-//		transform.transform(srcCoord, destCoord);
-//
-//		// 변환된 좌표 반환
-//		return new double[] { destCoord.x, destCoord.y };
-//	}
-
 }
