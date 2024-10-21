@@ -24,4 +24,12 @@ public class HospitalService {
     public List<Hospital> getAllHospitals() {
         return hospitalRepository.findAllHospitals();
     }
+
+    public List<Hospital> getHospitalsWithoutCoordinates() {
+        return hospitalRepository.getHospitalsWithoutCoordinates();
+    }
+
+    public void updateHospitalCoordinates(int id, String latitude, String longitude) {
+        hospitalRepository.updateHospitalCoordinates(id, latitude, longitude);
+    }
 }

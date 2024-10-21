@@ -4,6 +4,7 @@ package com.project.tailsroute.controller;
 import com.opencsv.CSVReader;
 import com.project.tailsroute.service.HospitalService;
 import com.project.tailsroute.vo.Hospital;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -11,11 +12,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.List;
 
 @Controller
@@ -34,6 +37,94 @@ public class UsrHospitalController {
         model.addAttribute("GOOGLE_MAP_API_KEY", API_KEY);
         model.addAttribute("message", "24시간 병원 message 추가");
         return "usr/map/hospital";
+    }
+
+    // 주소 클린징 함수 추가
+    private String cleanAddress(String address) {
+        return address.replaceAll("\\(.*\\)", "").trim();  // 괄호 안의 내용을 제거하고 앞뒤 공백을 제거
+    }
+
+    @GetMapping("/usr/hospital/updateCoordinates")
+    @ResponseBody
+    public String updateHospitalCoordinates() {
+        List<Hospital> hospitals = hospitalService.getHospitalsWithoutCoordinates();
+        String apiKey = API_KEY;
+
+        int count = 0;
+
+        for (Hospital hospital : hospitals) {
+            String address = null;
+
+            // 도로명 주소가 빈 문자열이 아닌지 확인
+            if (hospital.getRoadAddress() != null && !hospital.getRoadAddress().trim().isEmpty()) {
+                address = hospital.getRoadAddress();
+            }
+            // 지번 주소가 빈 문자열이 아닌지 확인
+            else if (hospital.getJibunAddress() != null && !hospital.getJibunAddress().trim().isEmpty()) {
+                address = hospital.getJibunAddress();
+            } else {
+                System.out.println("주소 정보가 없는 병원 ID: " + hospital.getId());
+                continue; // 주소가 없으면 다음 병원으로 넘어감
+            }
+
+            // 좌표를 가져와서 업데이트
+            String coordinates = getCoordinatesFromAddress(address, apiKey);
+            if (coordinates != null) {
+                String[] latLng = coordinates.split(",");
+                hospitalService.updateHospitalCoordinates(hospital.getId(), latLng[0], latLng[1]);
+                System.out.println("좌표 업데이트 성공: 병원 ID " + hospital.getId());
+            } else {
+                System.out.println("좌표를 가져오지 못한 병원 ID: " + hospital.getId());
+            }
+
+            count++;
+
+            if (count > 10)
+                break;
+        }
+
+        return "Coordinates updated for hospitals without latitude/longitude";
+    }
+
+    private String getCoordinatesFromAddress(String address, String apiKey) {
+        String coordinates = null;
+        try {
+            String cleanedAddress = cleanAddress(address);  // 주소 클린징
+            if (cleanedAddress == null || cleanedAddress.isEmpty()) {
+                System.out.println("유효하지 않은 주소입니다: " + address);
+                return null;
+            }
+
+            String apiUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(cleanedAddress, "UTF-8") + "&key=" + apiKey;
+
+            System.out.println("요청하는 주소: <" + address + ">");
+            System.out.println("API 요청 URL: " + apiUrl);
+
+            RestTemplate restTemplate = new RestTemplate();
+            String response = restTemplate.getForObject(apiUrl, String.class);
+            JSONObject json = new JSONObject(response);
+
+            if ("OK".equals(json.getString("status"))) {
+                JSONObject location = json.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location");
+                String lat = location.getDouble("lat") + "";
+                String lng = location.getDouble("lng") + "";
+                coordinates = lat + "," + lng;
+            } else {
+                System.out.println("Geocoding API 오류: " + json.getString("status") + " - " + json.optString("error_message"));
+            }
+        } catch (Exception e) {
+            System.out.println("주소 변환 실패: " + address);
+            e.printStackTrace();
+        }
+        return coordinates;
+    }
+
+    // DB 데이터 조회하는 테스트 코드
+    @RequestMapping("/usr/hospital/hospitals")
+    public String showHospitals(Model model) {
+        List<Hospital> hospitals = hospitalService.getAllHospitals();
+        model.addAttribute("hospitals", hospitals);
+        return "usr/hospital/hospitals";
     }
 
     // 테스트용 코드
@@ -102,11 +193,11 @@ public class UsrHospitalController {
 
                 // 번호,소재지전화,소재지전체주소,도로명전체주소,사업장명 순으로 저장됨. 0~4
 
-                String id = nextLine[0]; // 번호
-                String callNumber = nextLine[1]; // 소재지 전화
-                String addressLocation = nextLine[2]; // 소재지 전체 주소
-                String addressStreet = nextLine[3];// 도로명 전체주소
-                String name = nextLine[4]; // 사업장 명
+                String id = checkEmpty(nextLine[0]); // 번호
+                String callNumber = checkEmpty(nextLine[1]); // 소재지 전화
+                String addressLocation = checkEmpty(nextLine[2]); // 소재지 전체 주소
+                String addressStreet = checkEmpty(nextLine[3]); // 도로명 전체 주소
+                String name = checkEmpty(nextLine[4]); // 사업장 명
 
                 System.err.println(id);
                 // int temp = Integer.parseInt(id);
@@ -134,11 +225,9 @@ public class UsrHospitalController {
         return "CSV to DB Insert 성공! <hr>" + output.toString();
     }
 
-    @RequestMapping("/usr/hospital/hospitals")
-    public String showHospitals(Model model) {
-        List<Hospital> hospitals = hospitalService.getAllHospitals();
-        model.addAttribute("hospitals", hospitals);
-        return "usr/hospital/hospitals"; // hospitalList.html 또는 hospitalList.jsp
+    // 빈 문자열을 null로 변환하는 함수
+    private String checkEmpty(String value) {
+        return (value != null && value.trim().isEmpty()) ? null : value;
     }
 
 }
