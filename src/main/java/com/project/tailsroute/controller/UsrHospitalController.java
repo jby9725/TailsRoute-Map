@@ -51,6 +51,12 @@ public class UsrHospitalController {
         return "usr/map/hospital";
     }
 
+    @GetMapping("/hospitals")
+    public List<Hospital> getAllHospitals() {
+        // DB에서 모든 병원 데이터를 가져와 반환
+        return hospitalService.getAllHospitals();
+    }
+
     // 주소 클린징 함수 추가
     private String cleanAddress(String address) {
         return address.replaceAll("\\(.*\\)", "").trim();  // 괄호 안의 내용을 제거하고 앞뒤 공백을 제거
