@@ -14,6 +14,8 @@
         <th>소재지 전화번호</th>
         <th>지번 주소</th>
         <th>도로명 주소</th>
+        <th>위도</th>
+        <th>경도</th>
     </tr>
     </thead>
     <tbody>
@@ -23,6 +25,8 @@
         <td th:text="${hospital.callNumber}"></td>
         <td th:text="${hospital.jibunAddress}"></td>
         <td th:text="${hospital.roadAddress}"></td>
+        <td th:text="${hospital.latitude}"></td>
+        <td th:text="${hospital.longitude}"></td>
     </tr>
     </tbody>
 </table>

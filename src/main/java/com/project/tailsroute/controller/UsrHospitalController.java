@@ -47,14 +47,23 @@ public class UsrHospitalController {
     public String showMain(Model model) {
 
         model.addAttribute("GOOGLE_MAP_API_KEY", API_KEY);
-        model.addAttribute("message", "24시간 병원 message 추가");
+
         return "usr/map/hospital";
     }
 
     @GetMapping("/hospitals")
+    @ResponseBody
     public List<Hospital> getAllHospitals() {
         // DB에서 모든 병원 데이터를 가져와 반환
         return hospitalService.getAllHospitals();
+    }
+
+    // DB 데이터 조회하는 테스트 코드
+    @RequestMapping("/usr/hospital/hospitalList")
+    public String showHospitals(Model model) {
+        List<Hospital> hospitals = hospitalService.getAllHospitals();
+        model.addAttribute("hospitals", hospitals);
+        return "usr/hospital/hospitals";
     }
 
     // 주소 클린징 함수 추가
@@ -218,50 +227,6 @@ public class UsrHospitalController {
             e.printStackTrace();
         }
         return coordinates;
-    }
-
-    // 클린징 하고 보내기
-//    private String getCoordinatesFromAddress(String address, String apiKey) {
-//        String coordinates = null;
-//        try {
-//            // 주소 클린징
-//            String cleanedAddress = cleanAddress(address);
-//            System.out.println("클린징된 주소: " + cleanedAddress);
-//
-//            // API 요청 URL 생성
-//            String apiUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(cleanedAddress, "UTF-8") + "&key=" + apiKey;
-//            System.out.println("API 요청 URL: " + apiUrl);
-//
-//            // RestTemplate 사용하여 API 호출
-//            RestTemplate restTemplate = new RestTemplate();
-//            String response = restTemplate.getForObject(apiUrl, String.class);
-//            JSONObject json = new JSONObject(response);
-//
-//            // API 응답 상태 확인
-//            if ("OK".equals(json.getString("status"))) {
-//                JSONObject location = json.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location");
-//                String lat = location.getDouble("lat") + "";
-//                String lng = location.getDouble("lng") + "";
-//                coordinates = lat + "," + lng;
-//                System.out.println("위도/경도: " + coordinates);
-//            } else {
-//                // 오류 발생 시 로그 출력
-//                System.out.println("Geocoding API 오류: " + json.getString("status") + " - " + json.optString("error_message"));
-//                System.out.println("API 응답 내용: " + json.toString());
-//            }
-//        } catch (Exception e) {
-//            System.out.println("주소 변환 실패: " + address);
-//            e.printStackTrace();
-//        }
-//        return coordinates;
-//    }
-
-    // DB 데이터 조회하는 테스트 코드
-    @RequestMapping("/usr/hospital/hospitals")
-    public String showHospitals(Model model) {
-        List<Hospital> hospitals = hospitalService.getAllHospitals();
-        model.addAttribute("hospitals", hospitals);
-        return "usr/hospital/hospitals";
     }
 
     // 테스트용 코드
