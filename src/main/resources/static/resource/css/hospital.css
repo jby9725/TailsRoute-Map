@@ -1,11 +1,22 @@
+/* 배경색 설정 */
+body {
+    background: #FFFEF0;
+    color: #4D3E3E;
+
+}
+
 /* 지도의 크기를 설정합니다 */
 #map {
-    height: 500px;
-    width: 50%;
+    height: 100%;
+    width: 100%;
 }
 /* 상단의 헤더에 가려지지 않도록 공간을 띄워줍니다. */
 #top-bar {
-    height: 50px;
+    height: 70px;
     width: 100%;
     background: rgba(0, 0, 0, 0);
+}
+
+h1 {
+    font-size: 2rem;
 }
