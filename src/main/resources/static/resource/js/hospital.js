@@ -77,7 +77,7 @@ async function initMap() {
     map = new Map(document.getElementById("map"), {
         center: center,
         zoom: 14,
-        mapId: "d46969492471ae84",
+        mapId: google_mapId,
     });
 
     // 마커를 저장할 배열 생성

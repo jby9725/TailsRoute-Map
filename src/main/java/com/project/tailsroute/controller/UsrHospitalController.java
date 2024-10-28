@@ -1,9 +1,10 @@
 package com.project.tailsroute.controller;
 
-
 import com.opencsv.CSVReader;
 import com.project.tailsroute.service.HospitalService;
 import com.project.tailsroute.vo.Hospital;
+import com.project.tailsroute.vo.Member;
+import com.project.tailsroute.vo.Rq;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,10 @@ public class UsrHospitalController {
     // 루트 디렉토리에 있는 .env 파일에서 API 키를 불러옴.
     @Value("${GOOGLE_MAP_API_KEY}")
     private String API_KEY;
+    @Value("${GOOGLE_MAP_ID}")
+    private String GOOGLE_MAP_ID;
 
     // 루트 디렉토리에 있는 .env 파일에서 API 키 불러옴
-
     @Value("${NAVER_MAP_CLIENT_ID}")
     private String naver_clientId; // 네이버 클라이언트 ID
     @Value("${NAVER_MAP_CLIENT_SECRET}")
@@ -43,10 +45,27 @@ public class UsrHospitalController {
     @Autowired
     private HospitalService hospitalService;
 
+    ////
+    private final Rq rq;
+    public UsrHospitalController(Rq rq) {
+        this.rq = rq;
+    }
+    ////
+
     @GetMapping("/usr/hospital/main")
     public String showMain(Model model) {
 
+        ////
+        boolean isLogined = rq.isLogined();
+        if (isLogined) {
+            Member member = rq.getLoginedMember();
+            model.addAttribute("member", member);
+        }
+        model.addAttribute("isLogined", isLogined);
+        ////
+
         model.addAttribute("GOOGLE_MAP_API_KEY", API_KEY);
+        model.addAttribute("GOOGLE_MAP_ID", GOOGLE_MAP_ID);
 
         return "usr/map/hospital";
     }
