@@ -208,3 +208,18 @@ async function findAnimalHospitals(location) {
         console.error("Nearby Search 오류 발생:", error);
     }
 }
+
+// CSS javascript
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const toggleButton = document.getElementById('toggle-button');
+
+    sidebar.classList.toggle('open');
+
+    // 토글 버튼의 방향 변경
+    if (sidebar.classList.contains('open')) {
+        toggleButton.innerHTML = '&#9664;'; // 화살표를 오른쪽으로
+    } else {
+        toggleButton.innerHTML = '&#9654;'; // 화살표를 왼쪽으로
+    }
+}

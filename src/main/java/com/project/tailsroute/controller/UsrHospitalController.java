@@ -47,6 +47,7 @@ public class UsrHospitalController {
 
     ////
     private final Rq rq;
+
     public UsrHospitalController(Rq rq) {
         this.rq = rq;
     }
@@ -70,19 +71,25 @@ public class UsrHospitalController {
         return "usr/map/hospital";
     }
 
-    @GetMapping("/hospitals")
-    @ResponseBody
-    public List<Hospital> getAllHospitals() {
-        // DB에서 모든 병원 데이터를 가져와 반환
-        return hospitalService.getAllHospitals();
-    }
-
     // DB 데이터 조회하는 테스트 코드
     @RequestMapping("/usr/hospital/hospitalList")
     public String showHospitals(Model model) {
         List<Hospital> hospitals = hospitalService.getAllHospitals();
         model.addAttribute("hospitals", hospitals);
         return "usr/hospital/hospitals";
+    }
+
+    @RequestMapping("/usr/hospital/updateOpeningHours")
+    @ResponseBody
+    public String updateOpeningHours(Model model) {
+        return "";
+    }
+
+    @GetMapping("/hospitals")
+    @ResponseBody
+    public List<Hospital> getAllHospitals() {
+        // DB에서 모든 병원 데이터를 가져와 반환
+        return hospitalService.getAllHospitals();
     }
 
     // 주소 클린징 함수 추가
