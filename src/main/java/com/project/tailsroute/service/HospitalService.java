@@ -21,15 +21,32 @@ public class HospitalService {
     @Autowired
     private HospitalRepository hospitalRepository;
 
+    @Autowired
+    private PlaceApiService placeApiService;
+
     // 루트 디렉토리에 있는 .env 파일에서 API 키를 불러옴.
     @Value("${GOOGLE_MAP_API_KEY}")
     private String API_KEY;
+
+    public void updatePlaceIdsForHospitals() {
+        List<Hospital> hospitals = hospitalRepository.findAllHospitals();
+        for (Hospital hospital : hospitals) {
+            try {
+                String placeId = placeApiService.getPlaceId(hospital.getName(), hospital.getLatitude(), hospital.getLongitude());
+                if (placeId != null) {
+                    hospitalRepository.updatePlaceId(hospital.getId(), placeId);
+                }
+            } catch (Exception e) {
+                System.out.println("Error updating place_id for hospital " + hospital.getName() + ": " + e.getMessage());
+            }
+        }
+    }
 
     // Google Place Autocomplete API를 호출하여 place_id를 얻는 메소드
     public String getPlaceIdByNameAndLocation(String hospitalName, double latitude, double longitude) {
         try {
             String urlString = String.format("https://maps.googleapis.com/maps/api/place/autocomplete/json?" +
-                            "input=%s&location=%f,%f&radius=500&key=%s",
+                            "input=%s&location=%f,%f&radius=1&key=%s",
                     hospitalName, latitude, longitude, API_KEY);
 
             URL url = new URL(urlString);

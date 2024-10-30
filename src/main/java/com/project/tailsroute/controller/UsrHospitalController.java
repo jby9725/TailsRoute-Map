@@ -79,16 +79,26 @@ public class UsrHospitalController {
         return "usr/hospital/hospitals";
     }
 
-    @RequestMapping("/usr/hospital/updateOpeningHours")
-    @ResponseBody
-    public String updateOpeningHours(Model model) {
-        return "";
+    @GetMapping("/usr/hospital/updatePlaceIds")
+    public ResponseEntity<String> updateHospitalPlaceIds() {
+        hospitalService.updatePlaceIdsForHospitals();
+        return ResponseEntity.ok("병원 목록의 place_id 업데이트가 완료되었습니다.");
     }
+
+//    @RequestMapping("/usr/hospital/updatePlaceId")
+//    public String updatePlaceId() {
+//
+//        String placeId = hospitalService.getPlaceIdByNameAndLocation("우리동물병원", 35.1616371, 126.9032478);
+//
+//        System.out.println("placeId : "+placeId);
+//
+//        return "redirect:/usr/hospital/hospitalList";
+//    }
 
     @RequestMapping("/usr/hospital/updatePlaceIdTest")
     public String updatePlaceIdTest() {
 
-        String placeId = hospitalService.getPlaceIdByNameAndLocation("일곡동물병원", 35.2031428, 126.8971768);
+        String placeId = hospitalService.getPlaceIdByNameAndLocation("우리동물병원", 35.1616371, 126.9032478);
 
         System.out.println("placeId : "+placeId);
 

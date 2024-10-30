@@ -28,12 +28,12 @@ public interface HospitalRepository {
 
 
 //
-    @Update("UPDATE hospital" +
-            "SET place_id = #{placeId}" +
+    @Update("UPDATE hospital " +
+            "SET place_id = #{placeId} " +
             "WHERE id = #{hospitalId}")
     void updatePlaceId(int hospitalId, String placeId);
 
-    @Select("SELECT * FROM hospital" +
+    @Select("SELECT * FROM hospital " +
             "WHERE name = #{hospitalName}")
     Optional<Hospital> findByName(String hospitalName);
 
