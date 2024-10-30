@@ -4,6 +4,7 @@ import com.project.tailsroute.vo.Hospital;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface HospitalRepository {
@@ -23,4 +24,17 @@ public interface HospitalRepository {
 
     @Update("UPDATE hospital SET latitude = #{latitude}, longitude = #{longitude} WHERE id = #{id}")
     void updateHospitalCoordinates(@Param("id") int id, @Param("latitude") String latitude, @Param("longitude") String longitude);
+
+
+
+//
+    @Update("UPDATE hospital" +
+            "SET place_id = #{placeId}" +
+            "WHERE id = #{hospitalId}")
+    void updatePlaceId(int hospitalId, String placeId);
+
+    @Select("SELECT * FROM hospital" +
+            "WHERE name = #{hospitalName}")
+    Optional<Hospital> findByName(String hospitalName);
+
 }

@@ -85,6 +85,16 @@ public class UsrHospitalController {
         return "";
     }
 
+    @RequestMapping("/usr/hospital/updatePlaceIdTest")
+    public String updatePlaceIdTest() {
+
+        String placeId = hospitalService.getPlaceIdByNameAndLocation("일곡동물병원", 35.2031428, 126.8971768);
+
+        System.out.println("placeId : "+placeId);
+
+        return "redirect:/usr/hospital/hospitalList";
+    }
+
     @GetMapping("/hospitals")
     @ResponseBody
     public List<Hospital> getAllHospitals() {

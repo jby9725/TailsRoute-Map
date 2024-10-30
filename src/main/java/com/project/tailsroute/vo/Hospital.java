@@ -17,4 +17,6 @@ public class Hospital {
     private String longitude;  // 경도
     private String businessStatus;  // 영업 상태 (영업/폐업)
     private String type;  // 병원 타입 (일반/야간/24시간)
+
+    private String place_id; // google Map Place 검색을 위한 ID
 }
