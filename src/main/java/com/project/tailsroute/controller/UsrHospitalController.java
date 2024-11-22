@@ -103,7 +103,7 @@ public class UsrHospitalController {
             @RequestParam(required = false) String region
     ) {
 
-        System.out.println("Filter type: " + type + ", Region: " + region);
+        // System.out.println("Filter type: " + type + ", Region: " + region);
 
         if (region == null || region.isEmpty()) {
             throw new IllegalArgumentException("Region parameter is required.");

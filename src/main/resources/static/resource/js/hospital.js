@@ -1,6 +1,12 @@
 $(document).ready(function () {
     // 페이지 로드 시 시 데이터를 서버에서 가져옴
     loadCities();
+
+    // 사이드바 열기
+    const sidebar = document.getElementById('sidebar');
+    const toggleButton = document.getElementById('toggle-button');
+    sidebar.classList.add('open');
+    toggleButton.innerHTML = '&#9664;'; // 화살표를 오른쪽으로
 });
 
 // 시 데이터 로드
@@ -159,54 +165,93 @@ document.querySelector('input[role="switch"]').addEventListener("change", functi
     fetchHospitalsAndUpdateMarkers(filterType);
 });
 
-// 사이드바 업데이트
-function fetchHospitalsWithFilters() {
-    const filterType = document.querySelector('input[role="switch"]').checked ? '24시간' : '일반';
-    const region = document.getElementById('city-select').value + ' ' + document.getElementById('county-select').value;
 
-    console.log(`/hospitals/filter?type=${filterType}&region=${region}`);
-
-    fetch(`/hospitals/filter?type=${filterType}&region=${region}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
+// 병원 필터링 함수
+function fetchHospitalsWithFilters(filterType, city, region) {
+    fetch(`/hospitals/filter?type=${filterType}&region=${encodeURIComponent(city + " " + region)}`)
+        .then(response => response.json())
         .then(hospitals => {
-            if (Array.isArray(hospitals)) {
-                updateSidebar(hospitals);
+            if (Array.isArray(hospitals) && hospitals.length > 0) {
+                updateSidebar(hospitals); // 사이드바 업데이트
             } else {
-                console.error("Unexpected response format:", hospitals);
+                updateSidebar([]); // 검색 결과 없음 처리
+                alert("검색된 병원이 없습니다.");
             }
         })
         .catch(error => console.error("Error fetching filtered hospitals:", error));
 }
 
+// 사이드바 업데이트
 function updateSidebar(hospitals) {
-    const sidebarList = document.querySelector('#sidebar ul'); // 사이드바의 리스트
-    sidebarList.innerHTML = ''; // 기존 항목 제거
+    const sidebar = document.getElementById('sidebar');
+    const listContainer = sidebar.querySelector('ul');
 
-    if (hospitals.length === 0) {
-        sidebarList.innerHTML = '<div class="text-gray-500">검색 결과가 없습니다.</div>';
-        return;
-    }
+    listContainer.innerHTML = ''; // 기존 리스트 항목 초기화
 
-    hospitals.forEach(hospital => {
+    hospitals.forEach((hospital, index) => {
         const listItem = document.createElement('li');
-        listItem.className = 'mb-4 border-b pb-4';
-
+        listItem.classList.add('border-b', 'p-4'); // TailwindCSS 클래스 추가
         listItem.innerHTML = `
             <p class="font-semibold">${hospital.name}</p>
-            <p class="text-sm text-gray-600">${hospital.roadAddress}</p>
-            <p class="text-sm text-gray-600">전화번호: ${hospital.callNumber ? hospital.callNumber : '정보 없음'}</p>
+            <p class="text-sm text-gray-600">${hospital.roadAddress || hospital.jibunAddress}</p>
+            <p class="text-sm text-gray-600">${hospital.callNumber || '전화번호 정보 없음'}</p>
         `;
-        sidebarList.appendChild(listItem);
+
+        // 클릭 이벤트 추가
+        listItem.addEventListener('click', () => {
+            if (markers[index]) {
+                const position = markers[index].getPosition();
+                map.setCenter(position); // 지도 중심 이동
+                map.setZoom(16); // 줌 레벨 조정
+                new google.maps.InfoWindow({
+                    content: `
+                        <h3>${hospital.name}</h3>
+                        <p>주소: ${hospital.roadAddress || '주소 정보 없음'}</p>
+                        <p>전화번호: ${hospital.callNumber || '전화번호 정보 없음'}</p>
+                    `
+                }).open(map, markers[index]);
+            }
+        });
+
+        listContainer.appendChild(listItem); // 리스트 항목 추가
     });
 }
 
-// 검색 버튼 클릭 이벤트
-document.getElementById('search-button').addEventListener('click', fetchHospitalsWithFilters);
+// 검색 버튼 클릭 이벤트 리스너
+document.getElementById('search-button').addEventListener('click', () => {
+    const filterType = document.querySelector('input[role="switch"]').checked ? "24시간" : "";
+    const selectedCity = document.getElementById('city-select').value;
+    const selectedRegion = document.getElementById('county-select').value;
+    const toggleButton = document.getElementById('toggle-button');
+
+    // 검색 조건 검증
+    if (!selectedCity || !selectedRegion) {
+        alert("시와 군/구를 모두 선택하세요.");
+        return;
+    }
+
+    // 사이드바 상태 전환
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        toggleButton.innerHTML = '&#9654;'; // 화살표를 왼쪽으로
+
+        setTimeout(() => {
+            sidebar.classList.add('open');
+            toggleButton.innerHTML = '&#9664;'; // 화살표를 오른쪽으로
+        }, 300); // 살짝 닫았다가 다시 열기
+
+    } else {
+        sidebar.classList.add('open');
+        toggleButton.innerHTML = '&#9664;'; // 화살표를 오른쪽으로
+    }
+
+    // 검색 수행
+    geocodeAddress();
+
+    // 병원 데이터를 서버에서 가져오기
+    fetchHospitalsWithFilters(filterType, selectedCity, selectedRegion);
+});
 
 // 신) 사용자가 시/군/구를 선택하여 주소를 좌표로 변환
 function geocodeAddress() {
@@ -222,7 +267,7 @@ function geocodeAddress() {
     const address = selectedCity + (selectedCity !== "세종특별자치시" ? " " + selectedCounty : "");
 
     // 주소 값을 콘솔에 출력하여 확인
-    console.log("Geocoding 주소:", address);
+    // console.log("Geocoding 주소:", address);
 
     geocoder.geocode({address}, function (results, status) {
         if (status === 'OK') {
@@ -233,12 +278,10 @@ function geocodeAddress() {
             const lng = location.lng();
 
             if (lat && lng) {
-                console.log("Geocoded location (lat, lng):", lat, lng);
+                // console.log("Geocoded location (lat, lng):", lat, lng);
                 map.setCenter(location);
                 map.setZoom(14);  // 줌 설정
 
-                // 동물 병원 검색 (Google Places API 사용)
-                // findAnimalHospitals(location);
             } else {
                 console.error('위도 및 경도 값이 null입니다.');
             }

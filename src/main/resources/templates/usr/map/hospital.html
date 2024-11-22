@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>24시간 병원 안내</title>
+    <title>TailsRoute</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/resource/dist/styles.css" th:href="@{/resource/dist/styles.css}" rel="stylesheet">
     <link rel="stylesheet" href="/resource/css/hospital.css"/>
@@ -30,30 +30,32 @@
     <div class="w-full h-full p-6">
         <!-- 지역별 검색 -->
         <div class="mb-4">
-            <h2 class="text-xl font-semibold mb-4">지역별 동물병원 검색</h2>
-            <div class="flex space-x-4">
+            <div class="flex space-x-4 justify-end">
+                <h2 class="text-xl font-semibold mb-4">지역별 동물병원 검색</h2>
+            </div>
+            <div class="flex space-x-4 justify-end">
                 <div class="flex items-center space-x-2">
                     <label for="city-select" class="font-medium">시/도를 선택하세요 : </label>
-                    <select id="city-select" onchange="loadCounties()" class="p-2 border border-gray-300 rounded">
+                    <select id="city-select" onchange="loadCounties()" class="p-2 border border-gray-300 rounded bg-white">
                         <option value="">시/도 선택</option>
                     </select>
                 </div>
                 <div class="flex items-center space-x-2">
                     <label for="county-select" class="font-medium">시/군/구를 선택하세요 : </label>
-                    <select id="county-select" class="p-2 border border-gray-300 rounded">
+                    <select id="county-select" class="p-2 border border-gray-300 rounded bg-white">
                         <option value="">시/군/구 선택</option>
                     </select>
                 </div>
                 <div>
-                    <button id="search-button" class="p-2 border border-gray-300 bg-white rounded"
-                            onclick="toggleSidebar(); geocodeAddress();">검색
+                    <button id="search-button" class="border rounded">
+                        검색
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- 24시간 병원만 보기 토글 -->
-        <div class="mb-4 flex items-center">
+        <div class="mb-4 flex items-center space-x-4 justify-end">
             <label class="flex items-center space-x-2">
                 <input role="switch" type="checkbox"/>
                 <span>24시간 병원만 보기</span>
