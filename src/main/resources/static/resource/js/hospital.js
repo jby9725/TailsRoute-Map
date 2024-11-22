@@ -94,6 +94,33 @@ async function initMap() {
         navigator.geolocation.getCurrentPosition((position) => {
             const {latitude, longitude} = position.coords;
             const userLocation = new google.maps.LatLng(latitude, longitude);
+            const geocoder = new google.maps.Geocoder();
+            const latlng = {lat: latitude, lng: longitude};
+
+
+            geocoder.geocode({location: latlng}, (results, status) => {
+                if (status === "OK" && results[0]) {
+                    const fullAddress = results[0].formatted_address;
+                    // console.log("전체 주소:", fullAddress);
+
+                    // 주소에서 시/도와 시/군/구 추출
+                    const addressParts = fullAddress.split(" ");
+                    if (addressParts.length >= 3) {
+                        const city = `${addressParts[1]}`;
+                        const region = `${addressParts[2]}`;
+                        // console.log("검색 city:", city);
+                        // console.log("검색 region:", region);
+
+                        // 검색 API 호출 및 사이드바 업데이트
+                        fetchHospitalsWithFilters("", city, region);
+                    } else {
+                        console.error("주소에서 필요한 정보를 추출할 수 없습니다.");
+                    }
+                } else {
+                    console.error("주소를 가져올 수 없습니다:", status);
+                }
+            });
+
             map.setCenter(userLocation); // 지도의 중심을 현재 위치로 설정
         }, (error) => {
             console.error("현재 위치를 가져올 수 없습니다.", error);
@@ -161,8 +188,19 @@ function fetchHospitalsAndUpdateMarkers(filterType = "") {
 // 토글 버튼 이벤트로 필터링 적용
 document.querySelector('input[role="switch"]').addEventListener("change", function () {
     const isChecked = this.checked;
-    const filterType = isChecked ? "24시간" : "";
-    fetchHospitalsAndUpdateMarkers(filterType);
+    const type = isChecked ? "24시간" : "";
+
+    const filterType = document.querySelector('input[role="switch"]').checked ? "24시간" : "";
+    const selectedCity = document.getElementById('city-select').value;
+    const selectedRegion = document.getElementById('county-select').value;
+
+    if (!selectedCity || (selectedCity !== "세종특별자치시" && !selectedRegion)) {
+        alert("시와 군/구를 모두 선택하세요.");
+        return;
+    }
+
+    fetchHospitalsWithFilters(filterType, selectedCity, selectedRegion);
+    fetchHospitalsAndUpdateMarkers(type);
 });
 
 
@@ -175,7 +213,7 @@ function fetchHospitalsWithFilters(filterType, city, region) {
                 updateSidebar(hospitals); // 사이드바 업데이트
             } else {
                 updateSidebar([]); // 검색 결과 없음 처리
-                alert("검색된 병원이 없습니다.");
+                // alert("검색된 병원이 없습니다.");
             }
         })
         .catch(error => console.error("Error fetching filtered hospitals:", error));
@@ -187,6 +225,15 @@ function updateSidebar(hospitals) {
     const listContainer = sidebar.querySelector('ul');
 
     listContainer.innerHTML = ''; // 기존 리스트 항목 초기화
+
+    if (hospitals.length === 0) {
+        // alert("hospitals.length == 0");
+        // <div class="text-gray-500">검색 결과가 없습니다.</div>
+        const listItem = document.createElement('div');
+        listItem.classList.add('text-gray-500');
+        listItem.innerHTML = `검색 결과가 없습니다.`;
+        listContainer.appendChild(listItem);
+    }
 
     hospitals.forEach((hospital, index) => {
         const listItem = document.createElement('li');
@@ -225,26 +272,26 @@ document.getElementById('search-button').addEventListener('click', () => {
     const toggleButton = document.getElementById('toggle-button');
 
     // 검색 조건 검증
-    if (!selectedCity || !selectedRegion) {
+    if (!selectedCity || (selectedCity !== "세종특별자치시" && !selectedRegion)) {
         alert("시와 군/구를 모두 선택하세요.");
         return;
     }
 
-    // 사이드바 상태 전환
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar.classList.contains('open')) {
-        sidebar.classList.remove('open');
-        toggleButton.innerHTML = '&#9654;'; // 화살표를 왼쪽으로
-
-        setTimeout(() => {
-            sidebar.classList.add('open');
-            toggleButton.innerHTML = '&#9664;'; // 화살표를 오른쪽으로
-        }, 300); // 살짝 닫았다가 다시 열기
-
-    } else {
-        sidebar.classList.add('open');
-        toggleButton.innerHTML = '&#9664;'; // 화살표를 오른쪽으로
-    }
+    // // 사이드바 상태 전환
+    // const sidebar = document.getElementById('sidebar');
+    // if (sidebar.classList.contains('open')) {
+    //     sidebar.classList.remove('open');
+    //     toggleButton.innerHTML = '&#9654;'; // 화살표를 왼쪽으로
+    //
+    //     setTimeout(() => {
+    //         sidebar.classList.add('open');
+    //         toggleButton.innerHTML = '&#9664;'; // 화살표를 오른쪽으로
+    //     }, 300); // 살짝 닫았다가 다시 열기
+    //
+    // } else {
+    //     sidebar.classList.add('open');
+    //     toggleButton.innerHTML = '&#9664;'; // 화살표를 오른쪽으로
+    // }
 
     // 검색 수행
     geocodeAddress();
