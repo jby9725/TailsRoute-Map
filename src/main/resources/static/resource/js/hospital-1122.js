@@ -106,6 +106,8 @@ function fetchHospitalsAndUpdateMarkers(filterType = "") {
         .then((response) => response.json())
         .then((data) => {
 
+            console.log("Fetched Data:", data); // 로그 추가
+
             // 기존 마커 제거
             markers.forEach(marker => marker.setMap(null));
             markers.length = 0;
@@ -115,13 +117,11 @@ function fetchHospitalsAndUpdateMarkers(filterType = "") {
                 markerCluster.clearMarkers();
             }
 
-            // updateSidebar(data);
-
             // 새로운 마커 추가
             data.forEach((hospital) => {
                 if (hospital.latitude && hospital.longitude) {
                     const marker = new google.maps.Marker({
-                        position: {lat: parseFloat(hospital.latitude), lng: parseFloat(hospital.longitude)},
+                        position: { lat: parseFloat(hospital.latitude), lng: parseFloat(hospital.longitude) },
                         map: map,
                         title: hospital.name,
                     });
@@ -129,11 +129,7 @@ function fetchHospitalsAndUpdateMarkers(filterType = "") {
 
                     // 클릭 이벤트 추가
                     const infoWindow = new google.maps.InfoWindow({
-                        content: `
-                                <h3>${hospital.name}</h3>
-                                <p>주소: ${hospital.roadAddress}</p>
-                                <p>전화번호: ${hospital.callNumber ? hospital.callNumber : '정보 없음'}</p>
-                        `
+                        content: `<h3>${hospital.name}</h3><p>주소: ${hospital.roadAddress}</p><p>전화번호: ${hospital.callNumber}</p>`
                     });
 
                     marker.addListener('click', () => {
@@ -158,55 +154,6 @@ document.querySelector('input[role="switch"]').addEventListener("change", functi
     const filterType = isChecked ? "24시간" : "";
     fetchHospitalsAndUpdateMarkers(filterType);
 });
-
-// 사이드바 업데이트
-function fetchHospitalsWithFilters() {
-    const filterType = document.querySelector('input[role="switch"]').checked ? '24시간' : '일반';
-    const region = document.getElementById('city-select').value + ' ' + document.getElementById('county-select').value;
-
-    console.log(`/hospitals/filter?type=${filterType}&region=${region}`);
-
-    fetch(`/hospitals/filter?type=${filterType}&region=${region}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(hospitals => {
-            if (Array.isArray(hospitals)) {
-                updateSidebar(hospitals);
-            } else {
-                console.error("Unexpected response format:", hospitals);
-            }
-        })
-        .catch(error => console.error("Error fetching filtered hospitals:", error));
-}
-
-function updateSidebar(hospitals) {
-    const sidebarList = document.querySelector('#sidebar ul'); // 사이드바의 리스트
-    sidebarList.innerHTML = ''; // 기존 항목 제거
-
-    if (hospitals.length === 0) {
-        sidebarList.innerHTML = '<div class="text-gray-500">검색 결과가 없습니다.</div>';
-        return;
-    }
-
-    hospitals.forEach(hospital => {
-        const listItem = document.createElement('li');
-        listItem.className = 'mb-4 border-b pb-4';
-
-        listItem.innerHTML = `
-            <p class="font-semibold">${hospital.name}</p>
-            <p class="text-sm text-gray-600">${hospital.roadAddress}</p>
-            <p class="text-sm text-gray-600">전화번호: ${hospital.callNumber ? hospital.callNumber : '정보 없음'}</p>
-        `;
-        sidebarList.appendChild(listItem);
-    });
-}
-
-// 검색 버튼 클릭 이벤트
-document.getElementById('search-button').addEventListener('click', fetchHospitalsWithFilters);
 
 // 신) 사용자가 시/군/구를 선택하여 주소를 좌표로 변환
 function geocodeAddress() {

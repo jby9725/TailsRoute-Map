@@ -45,7 +45,7 @@
                     </select>
                 </div>
                 <div>
-                    <button class="p-2 border border-gray-300 bg-white rounded"
+                    <button id="search-button" class="p-2 border border-gray-300 bg-white rounded"
                             onclick="toggleSidebar(); geocodeAddress();">검색
                     </button>
                 </div>
@@ -74,15 +74,16 @@
     <div class="p-4">
         <h2 class="text-xl font-semibold mb-4">검색 결과</h2>
         <ul>
+            <div class="text-gray-500">검색 결과가 없습니다.</div>
             <!-- 병원 리스트 항목 -->
-            <li class="mb-4 border-b pb-4">
-                <p class="font-semibold">오아시스 정형외과 신경외과 동물병원</p>
-                <p class="text-sm text-gray-600">동물병원 | 광교 센터블럭로 107</p>
-                <div class="flex space-x-2 mt-2 text-sm text-blue-600">
-                    <a href="#" class="hover:underline">웹사이트</a>
-                    <a href="#" class="hover:underline">경로</a>
-                </div>
-            </li>
+<!--            <li class="mb-4 border-b pb-4">-->
+<!--                <p class="font-semibold">오아시스 정형외과 신경외과 동물병원</p>-->
+<!--                <p class="text-sm text-gray-600">동물병원 | 광교 센터블럭로 107</p>-->
+<!--                <div class="flex space-x-2 mt-2 text-sm text-blue-600">-->
+<!--                    <a href="#" class="hover:underline">웹사이트</a>-->
+<!--                    <a href="#" class="hover:underline">경로</a>-->
+<!--                </div>-->
+<!--            </li>-->
             <!-- 추가적인 병원 리스트 항목 반복 -->
         </ul>
     </div>

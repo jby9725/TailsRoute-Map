@@ -96,6 +96,22 @@ public class UsrHospitalController {
         return hospitalService.getAllHospitals();
     }
 
+    @GetMapping("/hospitals/filter")
+    @ResponseBody
+    public List<Hospital> getFilteredHospitals(
+            @RequestParam(required = false, defaultValue = "일반") String type,
+            @RequestParam(required = false) String region
+    ) {
+
+        System.out.println("Filter type: " + type + ", Region: " + region);
+
+        if (region == null || region.isEmpty()) {
+            throw new IllegalArgumentException("Region parameter is required.");
+        }
+
+        return hospitalService.getHospitalsByTypeAndRegion(type, region);
+    }
+
     // 주소 클린징 함수 추가
     private String cleanAddress(String address) {
         return address.replaceAll("\\(.*\\)", "").trim();  // 괄호 안의 내용을 제거하고 앞뒤 공백을 제거

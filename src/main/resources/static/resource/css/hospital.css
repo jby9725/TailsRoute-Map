@@ -120,3 +120,14 @@ label {
     left: 300px;
 }
 /*****************/
+
+/* 리스트 항목 기본 스타일 */
+#sidebar ul li {
+    background-color: white; /* 기본 배경색 */
+    transition: background-color 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+/* 마우스를 가져다댔을 때 */
+#sidebar ul li:hover {
+    background-color: #f0f0f0; /* 살짝 어두운 배경색 */
+}
