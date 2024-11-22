@@ -223,6 +223,7 @@ function fetchHospitalsWithFilters(filterType, city, region) {
 function updateSidebar(hospitals) {
     const sidebar = document.getElementById('sidebar');
     const listContainer = sidebar.querySelector('ul');
+    const toggleButton = document.getElementById('toggle-button'); // 토글 버튼 참조
 
     listContainer.innerHTML = ''; // 기존 리스트 항목 초기화
 
@@ -230,7 +231,7 @@ function updateSidebar(hospitals) {
         // alert("hospitals.length == 0");
         // <div class="text-gray-500">검색 결과가 없습니다.</div>
         const listItem = document.createElement('div');
-        listItem.classList.add('text-gray-500');
+        listItem.classList.add('text-gray-500', 'p-4');
         listItem.innerHTML = `검색 결과가 없습니다.`;
         listContainer.appendChild(listItem);
     }
@@ -258,6 +259,10 @@ function updateSidebar(hospitals) {
                     `
                 }).open(map, markers[index]);
             }
+
+            // 사이드바 접기
+            sidebar.classList.remove('open');
+            toggleButton.innerHTML = '&#9654;'; // 화살표를 왼쪽으로
         });
 
         listContainer.appendChild(listItem); // 리스트 항목 추가
