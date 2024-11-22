@@ -37,6 +37,10 @@ public class HospitalService {
         hospitalRepository.doInsertHospitalInfo(callNumber, addressLocation, addressStreet, name);
     }
 
+    public List<Hospital> get24HourHospitals() {
+        return hospitalRepository.findHospitalsByType("24시간");
+    }
+
     public List<Hospital> getAllHospitals() {
         return hospitalRepository.findAllHospitals();
     }

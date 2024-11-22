@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
@@ -79,10 +80,19 @@ public class UsrHospitalController {
         return "usr/hospital/hospitals";
     }
 
+//    @GetMapping("/hospitals")
+//    @ResponseBody
+//    public List<Hospital> getAllHospitals() {
+//        // DB에서 모든 병원 데이터를 가져와 반환
+//        return hospitalService.getAllHospitals();
+//    }
+
     @GetMapping("/hospitals")
     @ResponseBody
-    public List<Hospital> getAllHospitals() {
-        // DB에서 모든 병원 데이터를 가져와 반환
+    public List<Hospital> getHospitals(@RequestParam(value = "type", required = false) String type) {
+        if ("24시간".equals(type)) {
+            return hospitalService.get24HourHospitals();
+        }
         return hospitalService.getAllHospitals();
     }
 

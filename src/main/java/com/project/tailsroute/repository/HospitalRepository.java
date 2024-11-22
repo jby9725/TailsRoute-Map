@@ -25,4 +25,7 @@ public interface HospitalRepository {
     @Update("UPDATE hospital SET latitude = #{latitude}, longitude = #{longitude} WHERE id = #{id}")
     void updateHospitalCoordinates(@Param("id") int id, @Param("latitude") String latitude, @Param("longitude") String longitude);
 
+    @Select("SELECT * FROM hospital WHERE type = #{type}")
+    List<Hospital> findHospitalsByType(@Param("type") String type);
+
 }
