@@ -1,24 +1,7 @@
-/*
-SQLyog Community v13.2.1 (64 bit)
-MySQL - 10.4.32-MariaDB : Database - tails_route
-*********************************************************************
-*/
-
-/*!40101 SET NAMES utf8 */;
-
-/*!40101 SET SQL_MODE=''*/;
-
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`tails_route` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 
 USE `tails_route`;
 
 /*Table structure for table `hospital` */
-
-DROP TABLE IF EXISTS `hospital`;
 
 CREATE TABLE `hospital` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '고유 병원 ID',
@@ -31,7 +14,7 @@ CREATE TABLE `hospital` (
   `businessStatus` enum('영업','폐업') DEFAULT '영업' COMMENT '영업 상태',
   `type` enum('일반','야간','24시간') NOT NULL DEFAULT '일반' COMMENT '병원 타입',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5236 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 /*Data for the table `hospital` */
 
@@ -5275,8 +5258,6 @@ insert  into `hospital`(`id`,`name`,`callNumber`,`jibunAddress`,`roadAddress`,`l
 
 /*Table structure for table `temp_hospital` */
 
-DROP TABLE IF EXISTS `temp_hospital`;
-
 CREATE TABLE `temp_hospital` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '고유 병원 ID',
   `name` text NOT NULL COMMENT '병원 이름',
@@ -5286,7 +5267,7 @@ CREATE TABLE `temp_hospital` (
   `type` enum('일반','24시간') NOT NULL DEFAULT '일반' COMMENT '병원 타입',
   PRIMARY KEY (`id`),
   UNIQUE KEY `callNumber` (`callNumber`)
-) ENGINE=InnoDB AUTO_INCREMENT=335 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 /*Data for the table `temp_hospital` */
 
@@ -5623,8 +5604,3 @@ insert  into `temp_hospital`(`id`,`name`,`callNumber`,`jibunAddress`,`roadAddres
 (332,'정메디컬동물병원','055-264-5959','경상남도 창원시 성산구 마디미서로 4 2층',NULL,'24시간'),
 (333,'24시동물병원','064-702-2475',NULL,'제주특별자치도 제주시 연삼로 353 24시동물병원','24시간'),
 (334,'동심동물병원','064-744-1030',NULL,'제주특별자치도 제주시 노연로 141','24시간');
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
