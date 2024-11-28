@@ -158,48 +158,6 @@ public class UsrHospitalController {
         return "Coordinates updated for hospitals without latitude/longitude " + count;
     }
 
-//    @GetMapping("/usr/hospital/updateCoordinatesGoogle")
-//    @ResponseBody
-//    public String updateHospitalCoordinates() {
-//        List<Hospital> hospitals = hospitalService.getHospitalsWithoutCoordinates();
-//        String apiKey = API_KEY;
-//
-//        int count = 0;
-//
-//        for (Hospital hospital : hospitals) {
-//            String address = null;
-//
-//            // 도로명 주소가 빈 문자열이 아닌지 확인
-//            if (hospital.getRoadAddress() != null && !hospital.getRoadAddress().trim().isEmpty()) {
-//                address = hospital.getRoadAddress();
-//            }
-//            // 지번 주소가 빈 문자열이 아닌지 확인
-//            else if (hospital.getJibunAddress() != null && !hospital.getJibunAddress().trim().isEmpty()) {
-//                address = hospital.getJibunAddress();
-//            } else {
-//                System.out.println("주소 정보가 없는 병원 ID: " + hospital.getId());
-//                continue; // 주소가 없으면 다음 병원으로 넘어감
-//            }
-//
-//            // 좌표를 가져와서 업데이트
-//            String coordinates = getCoordinatesFromAddress(address, apiKey);
-//            if (coordinates != null) {
-//                String[] latLng = coordinates.split(",");
-//                hospitalService.updateHospitalCoordinates(hospital.getId(), latLng[0], latLng[1]);
-//                System.out.println("좌표 업데이트 성공: 병원 ID " + hospital.getId());
-//            } else {
-//                System.out.println("좌표를 가져오지 못한 병원 ID: " + hospital.getId());
-//            }
-//
-//            count++;
-//
-//            if (count > 3)
-//                break;
-//        }
-//
-//        return "Coordinates updated for hospitals without latitude/longitude";
-//    }
-
     private String getCoordinatesFromAddress_NAVER(String address) {
 
         // 클린징을 하지 않고 원본 주소를 그대로 사용
