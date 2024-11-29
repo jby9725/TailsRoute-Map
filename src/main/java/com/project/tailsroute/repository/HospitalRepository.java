@@ -4,7 +4,6 @@ import com.project.tailsroute.vo.Hospital;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Mapper
 public interface HospitalRepository {
@@ -48,6 +47,7 @@ public interface HospitalRepository {
             (#{type} = '일반' OR type = #{type})
             AND (roadAddress LIKE CONCAT('%', #{region}, '%')
                  OR jibunAddress LIKE CONCAT('%', #{region}, '%'))
+            ORDER BY name ASC
             """)
     List<Hospital> findHospitalsByTypeAndRegion(@Param("type") String type, @Param("region") String region);
 }
